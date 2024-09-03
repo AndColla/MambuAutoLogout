@@ -1,4 +1,12 @@
-chrome.idle.setDetectionInterval(60*5);
+chrome.storage.local.get({ interval: 5 }).then((storage) => {
+  chrome.idle.setDetectionInterval(storage.interval * 60);
+});
+
+chrome.storage.onChanged.addListener(async function(changes, namespace) {
+  if (namespace === 'local' && 'interval' in changes) {
+    chrome.idle.setDetectionInterval(changes.interval.newValue * 60);
+  }
+})
 
 chrome.idle.onStateChanged.addListener(async function(newState) {
   switch (newState) {
